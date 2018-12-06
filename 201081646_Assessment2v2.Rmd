@@ -1,0 +1,126 @@
+---
+title: "Road Traffic Accidents Data Analysis using R"
+author: 'Student ID: 201081646'
+output: github_document
+#  output:
+#   pdf_document:
+#     fig_caption: yes
+#     fig_crop: yes
+#     fig_height: 3.3
+#     fig_width: 5.3
+#     keep_tex: yes
+#     number_sections: yes
+#     toc_depth: 2
+#   html_document:
+#     fig_caption: yes
+#     theme: journal
+#     toc: yes
+#     toc_depth: 2
+# header-includes:
+#  \usepackage{float}
+#  \floatplacement{figure}{H}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+
+# Introduction
+
+This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to analyse a road traffic accidents dataset collected by the UK Department for Transport (DfT) in 2005 trough different statistical methods such as: Boxplot visualisations, Statistical hypothesis testing, and Computing Confidence interval.
+
+It has been done using **R** (programming language) and it is code reproducible. To see the whole code written for its performance visit https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis
+
+# Data preparation
+
+First, we activate the libraries we will need to set up the project.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Activate libraries
+library(ggplot2)
+```
+
+Second, we load the data into the **R** environment.
+
+```{r eval=TRUE, echo=TRUE}
+# Read csv in R
+#xx=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/DfTaccidents.csv",header=T)
+xx=read.csv("DfTaccidents.csv", header=T)
+```
+
+The next step is to drop all those columns we will not need to perform our analysis. We only need: number of vehicles, type of area and day of the week.
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+# Have a look at the variables we got
+names(xx)
+# Drop all those we do not need
+xx <- xx[, c(8, 11, 30)]
+```
+
+Finally, we show the the dataset ready for exploration.
+
+```{r, echo=TRUE}
+# Show first 6 rows
+head(xx)
+```
+
+# Data exploration
+
+## Boxplot
+
+**Draw a boxplot** to compare the number of vehicles involved in an urban area, with the number involved in a rural area. **Explain why a transformation** of the data may (or may not) be appropriate. Using your transformation (or not) **carry out a suitable test** to investigate whether the average number of vehicles in an accident differs in urban and rural areas.
+
+The following boxplot compare the number of vehicles involved in an urban area with the number involved in a rural area. The data has been transformed in order to..., otherwise we cannot apreciate well the...
+
+```{r, fig, fig.cap="Number of vehicles involved grouped by type of area", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
+
+# List urbans or rural variable
+xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "1"] <- "Urban"
+xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "2"] <- "Rural"
+
+# Remove Unallocated recods
+xx = xx[!xx$Urban_or_Rural_Area == "3",]
+
+# Draw a boxplot
+ggplot(xx, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()
+
+ggplot(xx, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()+scale_y_log10()
+```
+
+As it can be seen, in the urban areas...
+
+A x test has been carried out to investigate whether the average number of vehicles in an accident differ in urban and rural areas.
+ 
+```{r}
+# Test to investigate whether the average number of vehicles differes per areas
+
+```
+
+As we can see, the...
+
+## Statistical hypothesis
+
+Using a suitable statistical hypothesis test, **investigate whether the frequency of accidents varies by day of the week**. Repeat this test using only week-days (excuding Saturday and Sunday).
+
+In this section, we investigate whether the frequency of accidents varies by day of the week. To do this we use a statistical hypotesis test.
+
+```{r}
+
+```
+
+This time the test is done using only week-days (excluding Saturday and Sunday).
+
+```{r}
+
+```
+
+## Confidence interval
+
+**Compute a 95% confidence interval** for the expected (mean) number of accidents which occur on a Monday. State your assumptions in computing this interval, and verify whether they are valid.
+
+Finally, in this section, we compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday.
+
+```{r}
+
+```
+
