@@ -38,7 +38,7 @@ First, we activate the libraries we will need to set up the project.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Activate libraries
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
 ```
 
@@ -57,7 +57,31 @@ The next step is to drop all those columns we will not need to perform our analy
 names(xx)
 # Drop all those we do not need
 xx <- xx[, c(8, 11, 30)]
+# We check for NA's, Class and other characteristics of the data
+summary(xx)
 ```
+
+Then, we transform the variables
+
+```{r}
+# Rename labels of Urban_or_Rural_Area
+xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "1"] <- "Urban"
+xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "2"] <- "Rural"
+xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "3"] <- "Unallocated"
+
+# Rename labels of day of the week
+xx$Day_of_Week[xx$Day_of_Week == "1"] <- "Sunday"
+xx$Day_of_Week[xx$Day_of_Week == "2"] <- "Monday"
+xx$Day_of_Week[xx$Day_of_Week == "3"] <- "Tuesday"
+xx$Day_of_Week[xx$Day_of_Week == "4"] <- "Wednesday"
+xx$Day_of_Week[xx$Day_of_Week == "5"] <- "Thursday"
+xx$Day_of_Week[xx$Day_of_Week == "6"] <- "Friday"
+xx$Day_of_Week[xx$Day_of_Week == "7"] <- "Saturday"
+
+xx$Day_of_Week  <- factor(xx$Day_of_Week , levels= c("Sunday", "Monday", 
+    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+```
+
 
 Finally, we show the the dataset ready for exploration.
 
@@ -74,7 +98,7 @@ head(xx)
 
 The following boxplot compares the number of vehicles involved in accidents in urban areas with the number involved in a rural areas. 
 
-The boxplot withouht transformation show us that the data is not symetric, it is, in fact, very skewed to the left - The median and the 3rdQu are the same: 2.
+The boxplot without transformation show us that the data is not symetric, it is, in fact, very skewed to the left - The median and the 3rdQu are the same: 2.
 
 To perform this graph we transforme the data in order to:
 - make the relationship beween x and y more linear
@@ -85,36 +109,33 @@ What kind of transformatin we apply?
 http://onlinestatbook.com/2/transformations/contents.html
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
-# List urbans or rural variable
-xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "1"] <- "Urban"
-xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "2"] <- "Rural"
 # Remove Unallocated recods
-xx = xx[!xx$Urban_or_Rural_Area == "3",]
+xx_area = xx[!xx$Urban_or_Rural_Area == "Unallocated",]
 
 # Draw a boxplot
-p <- ggplot(xx, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()
+p <- ggplot(xx_area, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()
 p + ggtitle("Figure 1. Number of vehicles involved grouped by type of area") +
   xlab("Type of area") + ylab("Number of vehicles")
 
 # Summaries
-summary(xx$Number_of_Vehicles)
-summary(log2(xx$Number_of_Vehicles))
-summary(log10(xx$Number_of_Vehicles))
-summary(sqrt(xx$Number_of_Vehicles))
+summary(xx_area$Number_of_Vehicles)
+summary(log2(xx_area$Number_of_Vehicles))
+summary(log10(xx_area$Number_of_Vehicles))
+summary(sqrt(xx_area$Number_of_Vehicles))
 
 # Histograms
-p2 <- ggplot(xx, aes(x=Number_of_Vehicles)) +
+p2 <- ggplot(xx_area, aes(x=Number_of_Vehicles)) +
     geom_histogram(position="identity", colour="grey40", alpha=0.2, bins = 10) +
     facet_grid(. ~ Urban_or_Rural_Area)
 p4<-p2 + scale_y_continuous(trans = "log2")
 p3<-p2 + scale_y_continuous(trans = "log10")
 p5<-p2 + scale_y_continuous(trans = "sqrt")
-cowplot::plot_grid(p2, p3, p4, p5, labels = c("no transf.","log2","log10","sqrt"))
+cowplot::plot_grid(p2, p3, p4, p5, labels = c("","log2","log10","sqrt"), align = "h")
 
 # Boxplot with data transformed
-p6 <- ggplot(xx, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()+scale_y_log10()
+p6 <- ggplot(xx_area, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()+scale_y_log10()
 p6 + ggtitle("Figure 2. Number of vehicles involved grouped by type of area") +
-  xlab("Type of area") + ylab("Number of vehicles")
+  xlab("Type of area") + ylab("Number of vehicles -log10")
 ```
 
 https://www.youtube.com/watch?v=5571wc0iWCI
@@ -124,7 +145,7 @@ A x test has been carried out to investigate whether the average number of vehic
  
 ```{r}
 # Test to investigate whether the average number of vehicles differes per areas
-
+# t.test between two datsetes same sample.
 ```
 
 As we can see, the...
@@ -135,13 +156,27 @@ As we can see, the...
 
 In this section, we investigate whether the frequency of accidents varies by day of the week. To do this we use a statistical hypotesis test.
 
-```{r}
+Remember here we include the Unallocated are included.
 
+```{r}
+# hypothesis per each day
+ggplot(xx, aes(x=Day_of_Week))+geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 ```
 
-This time the test is done using only week-days (excluding Saturday and Sunday).
+Next, we are asked to do the same test using only week-days (excluding Saturday and Sunday).
 
 ```{r}
+# Select data using only week-days
+week_days <- xx%>%
+  select(Day_of_Week)%>%
+  filter(!Day_of_Week %in% c("Saturday", "Sunday"))
+table(week_days)
+
+ggplot(week_days, aes(x=Day_of_Week))+geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
+
+# hypothesis per each day using only week-days
 
 ```
 
@@ -152,7 +187,10 @@ This time the test is done using only week-days (excluding Saturday and Sunday).
 Finally, in this section, we compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday.
 
 ```{r}
-
+# Select data using only week-days
+week_days<- xx%>%
+  select(Day_of_Week)%>%
+  filter(Day_of_Week == "Monday")
 ```
 
 ## Bibliography
