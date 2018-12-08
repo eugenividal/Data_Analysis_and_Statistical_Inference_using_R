@@ -30,9 +30,9 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # Introduction
 
-This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer statistically three questions regarding a road traffic accidents dataset collected by the UK Department for Transport in 2005.
+This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer three questions through inferential statistical analysis regarding a road traffic accidents dataset from the UK Department for Transport.
 
-All the analysis has been done using **R** (programming language) and is code reproducible. To see the complete coding process for data preparation and analysis visit https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis
+All the analysis has been done using **R** (programming language) and is code reproducible. To see the complete **R** coding process and outputs visit https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 # Activate libraries
@@ -42,6 +42,7 @@ library(cowplot)
 
 ```{r eval=TRUE, include=FALSE}
 # Read csv in R
+# xx=read.csv("http://www1.maths.leeds.ac.uk/~charles/maths5741/DfTaccidents.csv",header = T)
 xx=read.csv("DfTaccidents.csv", header=T)
 ```
 
@@ -50,6 +51,8 @@ xx=read.csv("DfTaccidents.csv", header=T)
 names(xx)
 # Drop all those we do not need
 xx <- xx[, c(8, 11, 30)]
+# Create a variable count with value 1
+xx$count <- 1 
 # We check for NA's, Class and other characteristics of the data
 summary(xx)
 ```
@@ -86,38 +89,43 @@ head(xx)
 
 In this question, first, we are asked to draw a boxplot to compare the number of vehicles involved in urban areas with the number invlolved in rural areas.
 
-To plot the boxplot, we first remove the unallocated values, and then we transform the data due to the fact that it is not symetric. It is very skewed to the left (see histogram 1). The transofrmation that we use is log10.
+http://www.jbstatistics.com/pooled-variance-t-tests-and-confidence-intervals-an-example/
+
+To plot the boxplot, we first remove the unallocated values. Next, we visualise the data to analyse if it is normal (histogram 1). Because it is very skewed to the right, we take the log10 and see that it substantially improves (histogram 2). 
 
 ```{r, fig.align='center', message=FALSE, warning=FALSE, include=FALSE, out.extra=''}
 # Remove Unallocated recods
 xx_area = xx[!xx$Urban_or_Rural_Area == "Unallocated",]
 ```
 
+```{r}
+# show table of values
+table(xx_area$Number_of_Vehicles)
+```
+
 ```{r, fig.align='center', message=FALSE, warning=FALSE, include=FALSE, out.extra=''}
 # Draw a boxplot
 p <- ggplot(xx_area, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()
-p + ggtitle("Figure 1. Number of vehicles involved grouped by type of area") +
-  xlab("Type of area") + ylab("Number of vehicles")
 ```
 
-```{r, fig.align='center', message=FALSE, warning=FALSE, include=FALSE, out.extra=''}
+```{r, include=FALSE}
 # Summaries
 summary(xx_area$Number_of_Vehicles)
-summary(log2(xx_area$Number_of_Vehicles))
 summary(log10(xx_area$Number_of_Vehicles))
-summary(sqrt(xx_area$Number_of_Vehicles))
+```
 
+```{r, fig, fig.cap="Histograms", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Histograms
 p2 <- ggplot(xx_area, aes(x=Number_of_Vehicles)) +
     geom_histogram(position="identity", colour="grey40", alpha=0.2, bins = 10) +
-    facet_grid(. ~ Urban_or_Rural_Area)
-p4<-p2 + scale_y_continuous(trans = "log2")
+    facet_grid(. ~ Urban_or_Rural_Area) +  xlab("Type of area") + ylab("Number of vehicles")+  theme_minimal(base_size = 8)
 p3<-p2 + scale_y_continuous(trans = "log10")
-p5<-p2 + scale_y_continuous(trans = "sqrt")
-cowplot::plot_grid(p2, p3, p4, p5, labels = c("","log2","log10","sqrt"), align = "h")
+p3<-p3 +  xlab("Type of area") + ylab("Number of vehicles log10")
+p4<-plot_grid(p2, p3, labels = c("H1","H2"), align = "h", label_size = 10, label_x = 0, label_y = 0, hjust = -0.5, vjust = -0.5)
+p4  
 ```
 
-```{r, fig, fig.cap="Number of vehicles involved grouped by type of area", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
+```{r, fig2, fig.cap="Number of vehicles involved grouped by type of area", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Boxplot with data transformed
 p6 <- ggplot(xx_area, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot()+scale_y_log10()
 p6 +  xlab("Type of area") + ylab("Number of vehicles -log10") +  theme_minimal(base_size = 8)
@@ -125,7 +133,9 @@ p6 +  xlab("Type of area") + ylab("Number of vehicles -log10") +  theme_minimal(
 
 Secondly, we have to carry out a test to investigate wheter the average number of vehicles in an accident differs per type of area.
 
-For this, using the transformation we perform a pooled variance test  (https://statistics.laerd.com/statistical-guides/independent-t-test-statistical-guide.php)
+For this, using the transformation we perform a **pooled variance test**. We assume that \(\sigma_{1}^{2}\) = \(\sigma_{2}^{2}\) = \(\sigma^{2}\)
+
+http://www.jbstatistics.com/inference-for-two-means-introduction/
 
 $$H_{0}: \mu_{urban} = \mu_{rural}\;\;\;vs.\;\;\;H_{1}: \mu_{urban} \neq \mu_{rural}$$
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
@@ -151,7 +161,9 @@ In conclusion, we can say that
 
 In this question, first, we have to investigate whether the frequency of accidents varies by day of the week using the suitable statistical hypothesis test.
 
-For this, we apply a Chi-squared test.
+For this, we apply a **chi-squared test**.
+
+http://www.jbstatistics.com/chi-square-tests-for-one-way-tables/
 
 ```{r}
 # hypothesis per each day
@@ -181,11 +193,28 @@ ggplot(week_days, aes(x=Day_of_Week))+geom_bar() +
 
 Finally, in question 3, we are asked to compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday.
 
+Look at example in p.62 to answer this:
+
+- The data is clearly not normal. The distribution is discrete and very skewed to the right. The table of values is:
+
+- The sample is huge (*n*= 198,735) so the central limit theorem stats that the sample mean in normallly distributed (even when the data are not).
+
+- However, we need to think - for which population are we estimating a mean for?.
+
+Is this a simple t-distribution confidence interval? WE could say that because the sample is that bing could be just a normal confidence interval?
+
+I need to create calculate the mean of accidents on Mondays, so per each Monday which is the number of accidents expected. How to do that?
+
 ```{r}
 # Select data using only week-days
-week_days<- xx%>%
-  select(Day_of_Week)%>%
-  filter(Day_of_Week == "Monday")
+Mondays<- xx%>%
+  select(count, Day_of_Week)%>%
+  group_by(Day_of_Week)%>% 
+  summarise(sum = sum(count))
+```
+
+```{r}
+#t.test(Mondays, conf.level = 0.95)$conf.int
 ```
 
 # Bibliography

@@ -131,13 +131,13 @@
 \section{Introduction}\label{introduction}
 
 This report is the second assessment of the \textbf{MATH5741M
-Statistical Theory and Methods} module. Its aim is to answer
-statistically three questions regarding a road traffic accidents dataset
-collected by the UK Department for Transport in 2005.
+Statistical Theory and Methods} module. Its aim is to answer three
+questions through inferential statistical analysis regarding a road
+traffic accidents dataset from the UK Department for Transport.
 
 All the analysis has been done using \textbf{R} (programming language)
-and is code reproducible. To see the complete coding process for data
-preparation and analysis visit
+and is code reproducible. To see the complete \textbf{R} coding process
+and outputs visit
 \url{https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis}
 
 \section{Results}\label{results}
@@ -148,10 +148,27 @@ In this question, first, we are asked to draw a boxplot to compare the
 number of vehicles involved in urban areas with the number invlolved in
 rural areas.
 
-To plot the boxplot, we first remove the unallocated values, and then we
-transform the data due to the fact that it is not symetric. It is very
-skewed to the left (see histogram 1). The transofrmation that we use is
-log10.
+\url{http://www.jbstatistics.com/pooled-variance-t-tests-and-confidence-intervals-an-example/}
+
+To plot the boxplot, we first remove the unallocated values. Next, we
+visualise the data to analyse if it is normal (histogram 1). Because it
+is very skewed to the right, we take the log10 and see that it
+substantially improves (histogram 2).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# show table of values}
+\KeywordTok{table}\NormalTok{(xx_area$Number_of_Vehicles)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##      1      2      3      4      5      6      7      8      9     10 
+##  59770 117114  17002   3516    819    262     83     40     18      8 
+##     11     12     13     15     17     18     20 
+##      4      2      1      1      1      2      2
+\end{verbatim}
 
 \begin{figure}[H]
 
@@ -159,14 +176,26 @@ log10.
 
 }
 
-\caption{Number of vehicles involved grouped by type of area}\label{fig:fig}
+\caption{Histograms}\label{fig:fig}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{READMEv2_files/figure-latex/fig2-1} 
+
+}
+
+\caption{Number of vehicles involved grouped by type of area}\label{fig:fig2}
 \end{figure}
 
 Secondly, we have to carry out a test to investigate wheter the average
 number of vehicles in an accident differs per type of area.
 
-For this, using the transformation we perform a pooled variance test
-(\url{https://statistics.laerd.com/statistical-guides/independent-t-test-statistical-guide.php})
+For this, using the transformation we perform a \textbf{pooled variance
+test}. We assume that \(\sigma_{1}^{2}\) = \(\sigma_{2}^{2}\) =
+\(\sigma^{2}\)
+
+\url{http://www.jbstatistics.com/inference-for-two-means-introduction/}
 
 \[H_{0}: \mu_{urban} = \mu_{rural}\;\;\;vs.\;\;\;H_{1}: \mu_{urban} \neq \mu_{rural}\]
 
@@ -192,7 +221,9 @@ In this question, first, we have to investigate whether the frequency of
 accidents varies by day of the week using the suitable statistical
 hypothesis test.
 
-For this, we apply a Chi-squared test.
+For this, we apply a \textbf{chi-squared test}.
+
+\url{http://www.jbstatistics.com/chi-square-tests-for-one-way-tables/}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -202,7 +233,7 @@ For this, we apply a Chi-squared test.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{READMEv2_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{READMEv2_files/figure-latex/unnamed-chunk-13-1.pdf}
 
 Next, we are required to do the same test using only week-days
 (excluding Saturday and Sunday).
@@ -239,7 +270,7 @@ Next, we are required to do the same test using only week-days
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{READMEv2_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{READMEv2_files/figure-latex/unnamed-chunk-14-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -253,18 +284,47 @@ Finally, in question 3, we are asked to compute a 95\% confidence
 interval for the expected (mean) number of accidents which occur on a
 Monday.
 
+Look at example in p.62 to answer this:
+
+\begin{itemize}
+\item
+  The data is clearly not normal. The distribution is discrete and very
+  skewed to the right. The table of values is:
+\item
+  The sample is huge (\emph{n}= 198,735) so the central limit theorem
+  stats that the sample mean in normallly distributed (even when the
+  data are not).
+\item
+  However, we need to think - for which population are we estimating a
+  mean for?.
+\end{itemize}
+
+Is this a simple t-distribution confidence interval? WE could say that
+because the sample is that bing could be just a normal confidence
+interval?
+
+I need to create calculate the mean of accidents on Mondays, so per each
+Monday which is the number of accidents expected. How to do that?
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Select data using only week-days}
-\NormalTok{week_days<-}\StringTok{ }\NormalTok{xx%>%}
-\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week)%>%}
-\StringTok{  }\KeywordTok{filter}\NormalTok{(Day_of_Week ==}\StringTok{ "Monday"}\NormalTok{)}
+\NormalTok{Mondays<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(count, Day_of_Week)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Day_of_Week)%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{sum =} \KeywordTok{sum}\NormalTok{(count))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#t.test(Mondays, conf.level = 0.95)$conf.int}
 \end{Highlighting}
 \end{Shaded}
 
 \section{Bibliography}\label{bibliography}
 
-The resources used to carry out this project are:
+The resources used to carry out this project were:
 
 \begin{itemize}
 \tightlist
