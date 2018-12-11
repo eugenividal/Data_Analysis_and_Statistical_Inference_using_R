@@ -133,11 +133,12 @@
 This report is the second assessment of the \textbf{MATH5741M
 Statistical Theory and Methods} module. Its aim is to answer three
 questions through inferential statistical analysis regarding a road
-traffic accidents dataset from the UK Department for Transport.
+traffic accidents dataset from 2005 collected by the UK Department for
+Transport.
 
 All the analysis has been done using \textbf{R} (programming language)
 and is code reproducible. To see the complete \textbf{R} coding process
-and outputs visit
+visit
 \url{https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis}
 
 \section{Results}\label{results}
@@ -145,71 +146,86 @@ and outputs visit
 \subsection{Question 1}\label{question-1}
 
 In this question, first, we are asked to draw a boxplot to compare the
-number of vehicles involved in urban areas with the number invlolved in
-rural areas. Secondly, we have to carry out a test to investigate wheter
-the average number of vehicles in an accident differs per type of area.
+number of vehicles involved in urban areas with the number involved in
+rural areas. Secondly, we have to carry out a test to investigate
+whether the average number of vehicles in an accident differs per type
+of area.
 
-\url{http://www.jbstatistics.com/pooled-variance-t-tests-and-confidence-intervals-an-example/}
-
-To plot the boxplot, we first remove the unallocated values. Next, we
-visualise the data to analyse if it is normal (histogram 1). Because it
-is very skewed to the right, we take the log10 and see that it
-substantially improves (histogram 2).
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# show table of values}
-\KeywordTok{table}\NormalTok{(xx_area$Number_of_Vehicles)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##      1      2      3      4      5      6      7      8      9     10 
-##  59770 117114  17002   3516    819    262     83     40     18      8 
-##     11     12     13     15     17     18     20 
-##      4      2      1      1      1      2      2
-\end{verbatim}
+To plot the graph, we first remove the unallocated values.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{READMEv2_files/figure-latex/fig-1} 
+{\centering \includegraphics{READMEv4_files/figure-latex/fig-1} 
 
 }
 
-\caption{Histograms}\label{fig:fig}
+\caption{Number of vehicles involved grouped by type of area}\label{fig:fig}
 \end{figure}
+
+Apart from the fact that rural areas have more ouliers than urban areas,
+we cannot appreciate differences between them. Both boxes are very
+similar and in both cases the median and upper quartile seem to be
+coincident.
+
+From the histograms H1 we can see that the data is very skewed to the
+right. The common and convenient assumption in accident count analysis
+is that accidents are Poisson-distributed.
+
+To improve this, we take the log10 of the Number of Vehicles variable
+and plot new histograms, H2. The data is not symetric yet, but it has
+improved.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{READMEv2_files/figure-latex/fig2-1} 
+{\centering \includegraphics{READMEv4_files/figure-latex/fig2-1} 
 
 }
 
-\caption{Number of vehicles involved grouped by type of area}\label{fig:fig2}
+\caption{Histograms}\label{fig:fig2}
 \end{figure}
 
-From the boxplot we cannot be sure that the populations differ.
+A second boxpot is draw with the transformation.
 
-So, we carry out a test to investigate wheter the average number of
-vehicles in an accident differs per type of area.
+\begin{figure}[H]
 
-\url{http://www.jbstatistics.com/inference-for-two-means-introduction/}
+{\centering \includegraphics{READMEv4_files/figure-latex/fig3-1} 
 
-Determination of hypotheses:
+}
 
-\[H_{0}: \mu_{urban} = \mu_{rural}\;\;\;vs.\;\;\;H_{1}: \mu_{urban} \neq \mu_{rural}\]
+\caption{Number of vehicles (log10) involved grouped by type of area}\label{fig:fig3}
+\end{figure}
 
-The summary statistics are this summary()
+This time the size of the boxes is bigger; however, we cannot be sure
+wheter the average number of vehicles involved differs per type of area.
 
-It seems reasonable to assume \(\sigma_{1}^{2}\) = \(\sigma_{2}^{2}\)
-and so we estimate the common variance with a two-sided test for
-two-sample poblems (\emph{pooled estimate}).
+To investigate this we carry out statistical test. The null hypothesis
+is both means are equal. The alternative hypothesis that they are
+different.
 
-The test statistics is then:
+\[H_{0}: \mu_{r} = \mu_{u}\;\;\;vs.\;\;\;H_{1}: \mu_{r} \neq \mu_{u}\]
+The summary statistics are:
 
-We do not reject the null hypotesis and conclude that \(\mu_{urban}\) =
-\(\mu_{rural}\).
+\[n_{r}=72267\;\;\bar{x_{r}}=0.2389048\;\;s_{r}^{2}=0.1775904\;\;n_{u}=126378\;\;\bar{x_{u}}=0.2305898\;\;s_{u}^{2}=0.1622405\]
+
+We will use a critical region approach with \(\alpha\) = 0.01.
+
+It seems reasonable to assume \(\sigma_{1}^{2}\) = \(\sigma_{2}^{2}\),
+so we apply a \textbf{pooled estimate}.
+
+First, we calculate the pooled variance.
+
+\[s_{p}^{2}=\frac{(n_{r}-1)s_{r}^{2}+(n_{u}-1)s_{u}^{2}}{n_{r}+n_{u}-2} = \frac{72266*0.03153835017+126377*0.02632197984}{72267+126378-2}=0.0282197\]
+
+Then, we compute the test statistics.
+
+\[\frac{\bar x_{u}-\bar x_{r}-0}{s_{p}\sqrt{\frac{1}{n_{u}}+\frac{1}{n_{r}}}}=\frac{0.2389048-0.2305898}{0.0001316089}=0.001374182\]
+
+We compare this to the critical point of t-distribution with \(\nu\) =
+198643 degrees of freedom, which is
+\(t_{198643}\)(0.005)=2.575854\footnote{With this number of degrees of
+  freedom we could have also apply normal distribution}. Since
+0.001374182 \textless{} 2.575854, we do not reject the null hypotesis
+and conclude that \(\mu_{r}\) = \(\mu_{u}\).
 
 \subsection{Question 2}\label{question-2}
 
@@ -217,7 +233,11 @@ In this question, first, we have to investigate whether the frequency of
 accidents varies by day of the week using the suitable statistical
 hypothesis test.
 
-For this, we apply a \textbf{chi-squared test}.
+For this, we apply a \textbf{chi-squared test}. Check example p.91.
+
+Be aware this is a poisson distribution (!). The common and convenient
+assumption in accident count analysis is that accidents are
+Poisson-distributed.
 
 \url{http://www.jbstatistics.com/chi-square-tests-for-one-way-tables/}
 
@@ -230,32 +250,25 @@ Finally, in question 3, we are asked to compute a 95\% confidence
 interval for the expected (mean) number of accidents which occur on a
 Monday.
 
-Look at example in p.62 to answer this:
-
-\begin{itemize}
-\item
-  The data is clearly not normal. The distribution is discrete and very
-  skewed to the right. The table of values is:
-\item
-  The sample is huge (\emph{n}= 198,735) so the central limit theorem
-  stats that the sample mean in normallly distributed (even when the
-  data are not).
-\item
-  However, we need to think - for which population are we estimating a
-  mean for?.
-\end{itemize}
-
-Is this a simple t-distribution confidence interval? WE could say that
-because the sample is that bing could be just a normal confidence
-interval?
-
-I need to create calculate the mean of accidents on Mondays, so per each
-Monday which is the number of accidents expected. How to do that?
+For this, we apply a simple t-distribution confidence
+interval.\footnote{Again in this case, the sample is big enough (n=52)
+  to apply a normal distribution confidence interval}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{#t.test(Mondays, conf.level = 0.95)$conf.int}
-\KeywordTok{t.test}\NormalTok{(Mondays$n)$conf.int}
+\CommentTok{# Select data using only week-days}
+\NormalTok{xx_mon<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week, Date, count)%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Day_of_Week==}\StringTok{"Monday"}\NormalTok{)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Date)%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{n =} \KeywordTok{sum}\NormalTok{(count))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Compute the interval}
+\KeywordTok{t.test}\NormalTok{(xx_mon$n)$conf.int}
 \end{Highlighting}
 \end{Shaded}
 
@@ -264,6 +277,47 @@ Monday which is the number of accidents expected. How to do that?
 ## attr(,"conf.level")
 ## [1] 0.95
 \end{verbatim}
+
+Checking assumptions for infarence p.84.
+
+The assumptions in computing this interval are:
+
+\begin{enumerate}
+\def\labelenumi{(\arabic{enumi})}
+\item
+  the sample is random and that
+\item
+  the data is normally distributed. A histogram or a boxplot can be used
+  to visualise whether the data are normally distributed. Q-Q plots.
+  There are various formal hypothesis tests that can be used to check
+  normality. The test that we will use is the Shapiro-Wilk test.
+\end{enumerate}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{READMEv4_files/figure-latex/fig4-1} 
+
+}
+
+\caption{Histogram}\label{fig:fig4}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(xx_mon$n)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  xx_mon$n
+## W = 0.98537, p-value = 0.7681
+\end{verbatim}
+
+Since the p-value here is large (i.e.~greater than 0.05) we accept that
+the data come from a normal distribution.
 
 \section{Bibliography}\label{bibliography}
 

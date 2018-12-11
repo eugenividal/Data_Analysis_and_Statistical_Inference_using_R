@@ -133,11 +133,12 @@
 This report is the second assessment of the \textbf{MATH5741M
 Statistical Theory and Methods} module. Its aim is to answer three
 questions through inferential statistical analysis regarding a road
-traffic accidents dataset from the UK Department for Transport.
+traffic accidents dataset from 2005 collected by the UK Department for
+Transport.
 
 All the analysis has been done using \textbf{R} (programming language)
 and is code reproducible. To see the complete \textbf{R} coding process
-and outputs visit
+visit
 \url{https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis}
 
 \section{Results}\label{results}
@@ -146,34 +147,25 @@ and outputs visit
 
 In this question, first, we are asked to draw a boxplot to compare the
 number of vehicles involved in urban areas with the number invlolved in
-rural areas. Secondly, we have to carry out a test to investigate wheter
-the average number of vehicles in an accident differs per type of area.
+rural areas. Secondly, we have to carry out a test to investigate
+whether the average number of vehicles in an accident differs per type
+of area.
 
-\url{http://www.jbstatistics.com/pooled-variance-t-tests-and-confidence-intervals-an-example/}
+To plot the boxplot, we first remove the unallocated values.
 
-To plot the boxplot, we first remove the unallocated values. Next, we
-visualise the data to analyse if it is normal (histogram 1). Because it
-is very skewed to the right, we take the log10 and see that it
-substantially improves (histogram 2).
+\begin{center}\includegraphics{READMEv3_files/figure-latex/unnamed-chunk-8-1} \end{center}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# show table of values}
-\KeywordTok{table}\NormalTok{(xx_area$Number_of_Vehicles)}
-\end{Highlighting}
-\end{Shaded}
+In the boxplot is difficult to appreciate what is going on. We cannot
+appreciate the median and the box is very thin. This shows the data is
+not symetric. TO be certain, we visualise the data with a histogram (H1
+in figure 2). Because it is very skewed to the right, we take the log10
+and see that it substantially improves (See H2 in figure 2).
 
-\begin{verbatim}
-## 
-##      1      2      3      4      5      6      7      8      9     10 
-##  59770 117114  17002   3516    819    262     83     40     18      8 
-##     11     12     13     15     17     18     20 
-##      4      2      1      1      1      2      2
-\end{verbatim}
+Now, we plot our boxplot with the log10 in y axis.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{READMEv2_files/figure-latex/fig-1} 
+{\centering \includegraphics{READMEv3_files/figure-latex/fig-1} 
 
 }
 
@@ -182,19 +174,18 @@ substantially improves (histogram 2).
 
 \begin{figure}[H]
 
-{\centering \includegraphics{READMEv2_files/figure-latex/fig2-1} 
+{\centering \includegraphics{READMEv3_files/figure-latex/fig2-1} 
 
 }
 
 \caption{Number of vehicles involved grouped by type of area}\label{fig:fig2}
 \end{figure}
 
-From the boxplot we cannot be sure that the populations differ.
+It is not very well, but it has imrpoved significantly. However from the
+boxplot we cannot be sure that the populations differ.
 
 So, we carry out a test to investigate wheter the average number of
 vehicles in an accident differs per type of area.
-
-\url{http://www.jbstatistics.com/inference-for-two-means-introduction/}
 
 Determination of hypotheses:
 
@@ -217,7 +208,7 @@ In this question, first, we have to investigate whether the frequency of
 accidents varies by day of the week using the suitable statistical
 hypothesis test.
 
-For this, we apply a \textbf{chi-squared test}.
+For this, we apply a \textbf{chi-squared test}. Check example p.91.
 
 \url{http://www.jbstatistics.com/chi-square-tests-for-one-way-tables/}
 
@@ -249,13 +240,21 @@ Is this a simple t-distribution confidence interval? WE could say that
 because the sample is that bing could be just a normal confidence
 interval?
 
-I need to create calculate the mean of accidents on Mondays, so per each
-Monday which is the number of accidents expected. How to do that?
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Select data using only week-days}
+\NormalTok{xx_mon<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week, Date, count)%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Day_of_Week==}\StringTok{"Monday"}\NormalTok{)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Date)%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{n =} \KeywordTok{sum}\NormalTok{(count))}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{#t.test(Mondays, conf.level = 0.95)$conf.int}
-\KeywordTok{t.test}\NormalTok{(Mondays$n)$conf.int}
+\KeywordTok{t.test}\NormalTok{(xx_mon$n)$conf.int}
 \end{Highlighting}
 \end{Shaded}
 
