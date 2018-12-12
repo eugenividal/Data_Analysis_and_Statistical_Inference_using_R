@@ -1,0 +1,539 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Data Analysis and Statistical Inference using R},
+            pdfauthor={Student ID: 201081646},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Data Analysis and Statistical Inference using R}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Student ID: 201081646}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+    \date{}
+    \predate{}\postdate{}
+  
+\usepackage{floatrow}
+\floatsetup[figure]{capposition=top}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}\label{introduction}
+
+This report is the second assessment of the \textbf{MATH5741M
+Statistical Theory and Methods} module. Its aim is to answer
+statistically three questions regarding a road traffic accidents dataset
+from 2005 collected by the UK Department for Transport.
+
+All the analysis has been done using \textbf{R} (programming language)
+and is code reproducible. To see the complete \textbf{R} coding process
+and outputs visit
+\url{https://github.com/eugenividal/Data_Analysis_and_Statistical_Inference_using_R}.
+
+\section{Results}\label{results}
+
+\subsection{Question 1}\label{question-1}
+
+In this question, we are asked to draw a boxplot to compare the number
+of vehicles involved in urban areas with the number involved in rural
+areas.
+
+For this, we first prepare the data removing ``Unallocated'' values from
+the \texttt{Urban\_or\_Rural\ Area} variable. Then, we plot the graph.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{README_files/figure-latex/fig-1} 
+
+}
+
+\caption{Number of vehicles involved in accidents grouped by type of area}\label{fig:fig}
+\end{figure}
+
+Apart from the fact that rural areas have more outliers than urban
+areas, in the boxplot we cannot appreciate the differences between their
+quantiles. Both boxes look identical and the median and upper quartile
+seem to be coincident.
+
+This is because the data is not symmetrical. As we can see in histogram
+H1 (Figure 2), the data is very skewed to the right. To normalise it, we
+transform the \texttt{Number\_of\_Vehicles} variable in three different
+ways: taking the log10, log2 and using the square root (see histograms,
+H2, H3 and H4 in Figure 2). In these new histograms, the distribution is
+not entirely symmetric, but they have improved, particularly those that
+take log10 and log2.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{README_files/figure-latex/fig2-1} 
+
+}
+
+\caption{Data histogram (H1) and transformed data histograms (H2, H3, H4)}\label{fig:fig2}
+\end{figure}
+
+We choose the log10 transformation, which looks closer to normal
+distribution, and draw a second boxpot.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{README_files/figure-latex/fig3-1} 
+
+}
+
+\caption{Number of vehicles (log10) involved in accidents grouped by type of area}\label{fig:fig3}
+\end{figure}
+
+This time the appearance of the boxplot is better, with bigger boxes.
+However, the interpretation is still hard, and we cannot be 100\% sure
+whether the average number of vehicles involved in accidents differs per
+type of area.
+
+To investigate this, we carry out a statistical test, which is the
+second requirement of the question. The null hypothesis is that the mean
+of vehicles involved in both types of areas is equal. The alternative
+hypothesis is that they differ. Denoting the rural areas by subscript
+\emph{r} and urban by subscript \emph{u}, we have:
+
+\[H_{0}: \mu_{u} = \mu_{r}\;\;\;vs.\;\;\;H_{1}: \mu_{u} \neq \mu_{r}\]
+
+We will use a critical region approach with \(\alpha\) = 0.01.
+
+The summary statistics are:
+
+\[n_{u}=126378\;\;\bar{x_{u}}=0.2305898\;\;s_{u}^{2}=0.1622405\;\;n_{r}=72267\;\;\bar{x_{r}}=0.2389048\;\;s_{r}^{2}=0.1775904\]
+
+It seems reasonable to assume \(\sigma_{u}^{2}\) = \(\sigma_{r}^{2}\).
+Consequently, we apply a \textbf{pooled standard deviation} for our
+estimates\footnote{We can assume equal variances when the ratio of
+  max/min is less than 3 or less than 4 for small samples (Taylor 2017,
+  69).}.
+
+\[s_{p}^{2}=\frac{(n_{u}-1)s_{u}^{2}+(n_{r}-1)s_{r}^{2}}{n_{u}+n_{r}-2} = \frac{126377*0.02632197984+72266*0.03153835017}{126378+72267-2}=0.0282197\]
+
+The test statistic is then:
+
+\[\frac{\bar x_{u}-\bar x_{r}-0}{s_{p}\sqrt{\frac{1}{n_{u}}+\frac{1}{n_{r}}}}=\frac{0.2389048-0.2305898}{0.0001316089}=-0.001374182\]
+
+We compare this to the critical point of t-distribution with \(\nu\) =
+198,643 degrees of freedom\footnote{With this number of degrees of
+  freedom we could have also apply z-statistic and the result would have
+  been nearly the same.}, which is \(t_{198643}\)(0.005)=2.575854. Since
+\textbar{}0.001374182\textbar{} \textless{} 2.575854, we do not reject
+the null hypothesis and conclude that the mean of vehicles involved in
+both types of areas is equal (\(\mu_{u}\) = \(\mu_{r}\)).
+
+\subsection{Question 2}\label{question-2}
+
+In this question, we have to investigate whether the frequency of
+accidents varies by day of the week using a suitable statistical
+hypothesis test. \textbf{Chi-square test} can be used to test whether
+observed data differ significantly from theoretical expectations (Lane
+2018). So, this is the test we apply.
+
+The null hypothesis is that the frequency of accidents is evenly
+distributed per days of the week (i.e.~the probability of accidents
+occurring per each day is 1/7). The alternative hypothesis is that their
+frequency differs (i.e.~the probability of accidents occurring per each
+day is not 1/7).
+
+\[H_{0}: p=1/7\;\;\;vs.\;\;\;H_{1}:p\neq1/7\;\] \pagebreak
+
+To carry out this test, first, we prepare the data, aggregating it by
+\texttt{Day\_of\_Week}. Secondly, we create a table with the observed
+values, the expected values and other necessary contributions for the
+test per day of week.
+
+\begin{longtable}[]{@{}rrrrr@{}}
+\caption{Observed, expected and contributions to X\^{}2.
+Mon-Sun}\tabularnewline
+\toprule
+week days & observed & expected & oi - ei & (oi -
+ei)\^{}2/ei\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+week days & observed & expected & oi - ei & (oi -
+ei)\^{}2/ei\tabularnewline
+\midrule
+\endhead
+Monday & 27812 & 28390.71 & 578.7143 & 11.79647\tabularnewline
+Tuesday & 29219 & 28390.71 & -828.2857 & 24.16485\tabularnewline
+Wednesday & 30373 & 28390.71 & -1982.2857 & 138.40640\tabularnewline
+Thursday & 29738 & 28390.71 & -1347.2857 & 63.93565\tabularnewline
+Friday & 32738 & 28390.71 & -4347.2857 & 665.67163\tabularnewline
+Saturday & 26945 & 28390.71 & 1445.7143 & 73.61878\tabularnewline
+Sunday & 21910 & 28390.71 & 6480.7143 & 1479.34487\tabularnewline
+\bottomrule
+\end{longtable}
+
+The value of \(\chi ^2\) = 2456.93865. This can be compared to the
+\(\chi ^2\) distribution with 7 - 1 = 6 degrees of freedom, giving a
+p-value of 2.2e-16. This p-value represents the probability that we are
+wrong in the assumption they are basically not equally distributed. So,
+we reject the null hypothesis and affirm that the frequency of accidents
+is not evenly distributed per days of the week (\(p\neq1/7\)).
+
+Next, we are required to do the same test using only week-days
+(excluding Saturday and Sunday).
+
+This time the null hypothesis is that the frequency of accidents is
+equally distributed per week days (i.e.~the probability of accidents per
+each week day is 1/5). The alternative hypothesis is that their
+frequency differs (i.e.~the probability of accidents per each week day
+is not 1/5).
+
+\[H_{0}: p=1/5\;\;\;vs.\;\;\;H_{1}:p\neq1/5\;\]
+
+First, we prepare the data, aggregating it by \texttt{Day\_of\_Week} and
+removing Saturday and Sundays. Then, we create a new table with the
+summaries from Monday to Friday.
+
+\begin{longtable}[]{@{}rrrrr@{}}
+\caption{Observed, expected and contributions to X\^{}2.
+Mon-Fri}\tabularnewline
+\toprule
+week days & observed & expected & oi - ei & (oi -
+ei)\^{}2/ei\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+week days & observed & expected & oi - ei & (oi -
+ei)\^{}2/ei\tabularnewline
+\midrule
+\endhead
+Monday & 27812 & 29976 & 2164 & 156.221510\tabularnewline
+Tuesday & 29219 & 29976 & 757 & 19.116927\tabularnewline
+Wednesday & 30373 & 29976 & -397 & 5.257840\tabularnewline
+Thursday & 29738 & 29976 & 238 & 1.889645\tabularnewline
+Friday & 32738 & 29976 & -2762 & 254.491727\tabularnewline
+\bottomrule
+\end{longtable}
+
+The value of \(\chi ^2\) = 436.9776. This is compared to the \(\chi ^2\)
+distribution with 5-1=4 degree of freedom, giving a p-value again of
+2.2e-16. So, again we reject the null hypothesis and state that the
+frequency of accidents in week days is not equally distributed
+(\(p\neq1/5\)).
+
+\subsection{Question 3}\label{question-3}
+
+Finally, we are asked to compute a 95\% confidence interval for the
+expected (mean) number of accidents which occur on a Monday.
+
+To prepare the data, we filter the accidents occurred on Mondays and
+group them by date.
+
+In total we get 52 observations (\(n\) = 52). The sample mean and
+variance are: \(\bar{x}\)= 534.8462 and \(s^2\)= 92.98627 respectively.
+Since we desire a 95\% interval, our \(\alpha\)= 0.05. We then find that
+\(t_{51}(0.025)\)= 2.007584.
+
+Substituting all these quantities into the form of the confidence
+interval, we have the 95\% confidence interval for the expected number
+of accidents on a Monday.
+
+\[\left ( \bar{x} -t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}, \bar{x} +t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}\right) = (534.8462-25.88754,\; 534.8462+25.88754) = 508.9586, 560.7337 \]
+
+Computing this interval, we state the assumption that the data are
+normally distributed. An informal approach to check that this assumption
+is reasonable, is to compare a histogram (or another kind of graph) of
+the sample data to a normal probability curve, as we did in question 1.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{README_files/figure-latex/fig5-1} 
+
+}
+
+\caption{Histogram number of accidents which occur on a Monday}\label{fig:fig5}
+\end{figure}
+
+The histogram does not show perfect symmetry, but its shape is close to
+normal distribution.
+
+However, to be more certain, there are various formal hypothesis tests
+to check normality that can be used. The one that we will perform here
+is the \textbf{Shapiro-Wilk test}, which takes account of the expected
+values, but also the correlations between the order statistics (Taylor
+2017, 85).
+
+These are the hypothesis:
+
+\[H_{0}: data\;come\;from\;a\;normal\;distribution\;\;\;vs.\;\;\;H_{1}:data\;do\;not\;come\;from\;a\;normal\;distribution\]
+
+We perform Shapiro-Wilk test of normality using the command
+\texttt{shapiro.test(x)} in \textbf{R}.
+
+The results are W = 0.98537 and p-value = 0.7681.
+
+The p-values gives evidence against the null hypothesis. Since the
+p-value = 0.7681 is large (i.e.~greater than 0.05), we accept that the
+data come from a normally distributed population.
+
+\subsubsection{Appendix}\label{appendix}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::opts_chunk$}\KeywordTok{set}\NormalTok{(}\DataTypeTok{fig.pos =} \StringTok{'H'}\NormalTok{)}
+\CommentTok{# Activate libraries}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(cowplot)}
+\KeywordTok{library}\NormalTok{(knitr)}
+\CommentTok{# Read csv in R}
+\NormalTok{xx=}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"DfTaccidents.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{T)}
+\CommentTok{# Have a look at the variables we got}
+\KeywordTok{names}\NormalTok{(xx)}
+\CommentTok{# Drop all those we do not need}
+\NormalTok{xx <-}\StringTok{ }\NormalTok{xx[, }\KeywordTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{, }\DecValTok{30}\NormalTok{)]}
+\CommentTok{# Create a variable count with value 1 (for future aggregates)}
+\NormalTok{xx$count <-}\StringTok{ }\DecValTok{1} 
+\CommentTok{# Rename labels of Urban_or_Rural_Area}
+\NormalTok{xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area ==}\StringTok{ "1"}\NormalTok{] <-}\StringTok{ "Urban"}
+\NormalTok{xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area ==}\StringTok{ "2"}\NormalTok{] <-}\StringTok{ "Rural"}
+\NormalTok{xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area ==}\StringTok{ "3"}\NormalTok{] <-}\StringTok{ "Unallocated"}
+
+\CommentTok{# Rename labels of day of the week}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "1"}\NormalTok{] <-}\StringTok{ "Sunday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "2"}\NormalTok{] <-}\StringTok{ "Monday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "3"}\NormalTok{] <-}\StringTok{ "Tuesday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "4"}\NormalTok{] <-}\StringTok{ "Wednesday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "5"}\NormalTok{] <-}\StringTok{ "Thursday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "6"}\NormalTok{] <-}\StringTok{ "Friday"}
+\NormalTok{xx$Day_of_Week[xx$Day_of_Week ==}\StringTok{ "7"}\NormalTok{] <-}\StringTok{ "Saturday"}
+
+\CommentTok{# Give order the weekdays names}
+\NormalTok{xx$Day_of_Week<-}\StringTok{ }\KeywordTok{factor}\NormalTok{(xx$Day_of_Week, }\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"Monday"}\NormalTok{, }\StringTok{"Tuesday"}\NormalTok{, }\StringTok{"Wednesday"}\NormalTok{, }\StringTok{"Thursday"}\NormalTok{, }\StringTok{"Friday"}\NormalTok{, }\StringTok{"Saturday"}\NormalTok{,}\StringTok{"Sunday"}\NormalTok{))}
+\NormalTok{xx<-xx[}\KeywordTok{order}\NormalTok{(xx$Day_of_Week),]}
+\CommentTok{# Data ready for analysis - show first 6 rows}
+\KeywordTok{head}\NormalTok{(xx)}
+\CommentTok{# Remove Unallocated recods}
+\NormalTok{xx_a =}\StringTok{ }\NormalTok{xx[!xx$Urban_or_Rural_Area ==}\StringTok{ "Unallocated"}\NormalTok{,]}
+\CommentTok{# Draw boxplot}
+\NormalTok{xx_a$Urban_or_Rural_Area<-}\KeywordTok{factor}\NormalTok{(xx_a$Urban_or_Rural_Area, }\DataTypeTok{levels=}\KeywordTok{c}\NormalTok{(}\StringTok{"Urban"}\NormalTok{, }\StringTok{"Rural"}\NormalTok{))}
+\NormalTok{p <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(xx_a, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{Urban_or_Rural_Area, }\DataTypeTok{y=}\NormalTok{Number_of_Vehicles))+}\KeywordTok{geom_boxplot}\NormalTok{()}
+\NormalTok{p +}\StringTok{  }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles"}\NormalTok{) +}\StringTok{  }\KeywordTok{theme_minimal}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{8}\NormalTok{)}
+\CommentTok{# Create variables transformations}
+\NormalTok{xx_a$log2 <-}\StringTok{ }\KeywordTok{log2}\NormalTok{(xx_a$Number_of_Vehicles)}
+\NormalTok{xx_a$sqrt <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(xx_a$Number_of_Vehicles)}
+\NormalTok{xx_a$log10 <-}\StringTok{ }\KeywordTok{log10}\NormalTok{(xx_a$Number_of_Vehicles)}
+\CommentTok{# Plot histograms}
+\NormalTok{p2 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(xx_a, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{Number_of_Vehicles)) +}
+\StringTok{    }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{position=}\StringTok{"identity"}\NormalTok{, }\DataTypeTok{colour=}\StringTok{"grey40"}\NormalTok{, }\DataTypeTok{alpha=}\FloatTok{0.2}\NormalTok{, }\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) +}
+\StringTok{    }\KeywordTok{facet_grid}\NormalTok{(. ~}\StringTok{ }\NormalTok{Urban_or_Rural_Area) +}\StringTok{  }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles"}\NormalTok{)+}\StringTok{  }\KeywordTok{theme_minimal}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{8}\NormalTok{)}
+\NormalTok{p3<-p2 +}\StringTok{ }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{trans =} \StringTok{"log10"}\NormalTok{) +}\StringTok{   }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles log10"}\NormalTok{)}
+\NormalTok{p4<-p2+}\StringTok{ }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{trans =} \StringTok{"log2"}\NormalTok{) +}\StringTok{  }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles log2"}\NormalTok{)}
+\NormalTok{p5<-p2+}\StringTok{ }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{trans =} \StringTok{"sqrt"}\NormalTok{) +}\StringTok{ }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles sqrt"}\NormalTok{)}
+\NormalTok{p6<-}\KeywordTok{plot_grid}\NormalTok{(p2, p3, p4, p5, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"H1"}\NormalTok{,}\StringTok{"H2"}\NormalTok{,}\StringTok{"H3"}\NormalTok{,}\StringTok{"H4"}\NormalTok{), }\DataTypeTok{label_size =} \DecValTok{10}\NormalTok{, }\DataTypeTok{label_x =} \DecValTok{0}\NormalTok{, }\DataTypeTok{label_y =} \DecValTok{0}\NormalTok{, }\DataTypeTok{hjust =} \NormalTok{-}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{vjust =} \NormalTok{-}\FloatTok{0.5}\NormalTok{)}
+\NormalTok{p6 }
+\CommentTok{# Plot boxplot with data transformed}
+\NormalTok{p7 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(xx_a, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{Urban_or_Rural_Area, }\DataTypeTok{y=}\NormalTok{log10))+}\KeywordTok{geom_boxplot}\NormalTok{()}
+\NormalTok{p7 +}\StringTok{  }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Type of area"}\NormalTok{) +}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of vehicles -log10"}\NormalTok{) +}\StringTok{  }\KeywordTok{theme_minimal}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{8}\NormalTok{)}
+\CommentTok{# Prepare the data}
+\NormalTok{xx_u <-}\StringTok{ }\NormalTok{xx_a%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Urban_or_Rural_Area==}\StringTok{"Urban"}\NormalTok{)}
+\NormalTok{xx_r <-}\StringTok{ }\NormalTok{xx_a%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Urban_or_Rural_Area==}\StringTok{"Rural"}\NormalTok{)}
+\CommentTok{# Calculate pooled variance}
+\NormalTok{nu=}\KeywordTok{length}\NormalTok{(xx_u$Number_of_Vehicles)}
+\NormalTok{nr=}\KeywordTok{length}\NormalTok{(xx_r$Number_of_Vehicles)}
+\NormalTok{su=}\StringTok{ }\KeywordTok{sd}\NormalTok{(xx_u$log10)}
+\NormalTok{sr=}\StringTok{ }\KeywordTok{sd}\NormalTok{(xx_r$log10)}
+\NormalTok{sp =}\StringTok{ }\NormalTok{(((nr}\DecValTok{-1}\NormalTok{)*sr^}\DecValTok{2}\NormalTok{+(nu}\DecValTok{-1}\NormalTok{)*su^}\DecValTok{2}\NormalTok{))/((nr+nu)-}\DecValTok{2}\NormalTok{)}
+\NormalTok{sp}
+\CommentTok{# Compute test}
+\NormalTok{xbaru=}\StringTok{ }\KeywordTok{mean}\NormalTok{(xx_u$log10)}
+\NormalTok{xbarr=}\StringTok{ }\KeywordTok{mean}\NormalTok{(xx_r$log10)}
+\NormalTok{t =}\StringTok{ }\NormalTok{(xbaru-xbarr}\DecValTok{-0}\NormalTok{)/sp*}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{1}\NormalTok{/nu}\DecValTok{+1}\NormalTok{/nr)}
+\NormalTok{t}
+\CommentTok{# Critical value}
+\NormalTok{df=(nu+nr}\DecValTok{-2}\NormalTok{)}
+\NormalTok{df}
+\KeywordTok{abs}\NormalTok{(}\KeywordTok{qt}\NormalTok{(}\FloatTok{0.01}\NormalTok{/}\DecValTok{2}\NormalTok{, df)) }
+\CommentTok{# Prepare data}
+\NormalTok{xx_group_alldays<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week, count)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Day_of_Week)%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{observed =} \KeywordTok{sum}\NormalTok{(count))}
+\CommentTok{# Table}
+\NormalTok{xx_group_alldays$expected<-}\DecValTok{198735}\NormalTok{*(}\DecValTok{1}\NormalTok{/}\DecValTok{7}\NormalTok{)}
+\NormalTok{xx_group_alldays$o_e<-xx_group_alldays$expected-xx_group_alldays$observed}
+\NormalTok{xx_group_alldays$x2<-((xx_group_alldays$o_e)^}\DecValTok{2}\NormalTok{)/xx_group_alldays$expected}
+\KeywordTok{colnames}\NormalTok{(xx_group_alldays) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"week days"}\NormalTok{, }\StringTok{"observed"}\NormalTok{, }\StringTok{"expected"}\NormalTok{, }\StringTok{"oi - ei"}\NormalTok{, }\StringTok{"(oi - ei)^2/ei"}\NormalTok{)}
+\KeywordTok{kable}\NormalTok{(xx_group_alldays, }\DataTypeTok{align=}\KeywordTok{rep}\NormalTok{(}\StringTok{'r'}\NormalTok{), }\DataTypeTok{booktabs =} \NormalTok{T, }\DataTypeTok{caption =} \StringTok{"Observed, expected and contributions to X^2. Mon-Sun"}\NormalTok{)}
+\NormalTok{xsup2 <-(}\FloatTok{11.79647} \NormalTok{+}\StringTok{ }\FloatTok{24.16485} \NormalTok{+}\StringTok{ }\FloatTok{138.40640} \NormalTok{+}\StringTok{ }\FloatTok{63.93565} \NormalTok{+}\StringTok{ }\FloatTok{665.67163} \NormalTok{+}\StringTok{ }\FloatTok{73.61878}  \NormalTok{+}\StringTok{ }\FloatTok{1479.34487}\NormalTok{)}
+\CommentTok{# Compute test}
+\KeywordTok{chisq.test}\NormalTok{(xx_group_alldays$observed)}
+\CommentTok{# Prepare data}
+\NormalTok{xx_group_weekdays<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week, count)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Day_of_Week)%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{observed =} \KeywordTok{sum}\NormalTok{(count))%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Day_of_Week !=}\StringTok{ "Saturday"} \NormalTok{&}\StringTok{ }\NormalTok{Day_of_Week !=}\StringTok{ "Sunday"}\NormalTok{)}
+\CommentTok{# Table}
+\NormalTok{xx_group_weekdays$expected<-}\DecValTok{149880}\NormalTok{*(}\DecValTok{1}\NormalTok{/}\DecValTok{5}\NormalTok{)}
+\NormalTok{xx_group_weekdays$o_e<-xx_group_weekdays$expected-xx_group_weekdays$observed}
+\NormalTok{xx_group_weekdays$x2<-((xx_group_weekdays$o_e)^}\DecValTok{2}\NormalTok{)/xx_group_weekdays$expected}
+\KeywordTok{colnames}\NormalTok{(xx_group_weekdays) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"week days"}\NormalTok{, }\StringTok{"observed"}\NormalTok{, }\StringTok{"expected"}\NormalTok{, }\StringTok{"oi - ei"}\NormalTok{, }\StringTok{"(oi - ei)^2/ei"}\NormalTok{)}
+\KeywordTok{kable}\NormalTok{((xx_group_weekdays), }\DataTypeTok{align=}\KeywordTok{rep}\NormalTok{(}\StringTok{'r'}\NormalTok{), }\DataTypeTok{booktabs =} \NormalTok{T, }\DataTypeTok{caption =} \StringTok{"Observed, expected and contributions to X^2. Mon-Fri"}\NormalTok{)}
+\NormalTok{xsup2 <-(}\FloatTok{156.221511} \NormalTok{+}\StringTok{ }\FloatTok{19.116927} \NormalTok{+}\StringTok{ }\FloatTok{5.257840} \NormalTok{+}\StringTok{ }\FloatTok{1.889645} \NormalTok{+}\StringTok{ }\FloatTok{254.491727}\NormalTok{)}
+\CommentTok{# Compute test}
+\KeywordTok{chisq.test}\NormalTok{(xx_group_weekdays$observed)}
+\CommentTok{# Prepare data}
+\NormalTok{xx_mon<-}\StringTok{ }\NormalTok{xx%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(Day_of_Week, Date, count)%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Day_of_Week==}\StringTok{"Monday"}\NormalTok{)%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Date)%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{n =} \KeywordTok{sum}\NormalTok{(count))}
+\CommentTok{# Compute the 95% confidence interval}
+\NormalTok{xbar=}\StringTok{ }\KeywordTok{mean}\NormalTok{(xx_mon$n)}
+\NormalTok{xbar}
+\NormalTok{n=}\KeywordTok{length}\NormalTok{(xx_mon$n)}
+\NormalTok{n}
+\NormalTok{conf.level<-}\StringTok{ }\FloatTok{0.95}
+\NormalTok{z<-}\KeywordTok{qt}\NormalTok{((}\DecValTok{1}\NormalTok{+conf.level)/}\DecValTok{2}\NormalTok{,}\DataTypeTok{df=}\NormalTok{n}\DecValTok{-1}\NormalTok{)}
+\NormalTok{z}
+\NormalTok{se<-}\KeywordTok{sd}\NormalTok{(xx_mon$n)/}\KeywordTok{sqrt}\NormalTok{(n)}
+\KeywordTok{sd}\NormalTok{(xx_mon$n)}
+\NormalTok{ci<-z*se}
+\NormalTok{ci}
+\NormalTok{xbar-ci}
+\NormalTok{xbar+ci}
+\CommentTok{# Other way of computing the interval}
+\NormalTok{x<-}\StringTok{ }\NormalTok{xx_mon$n}
+\KeywordTok{t.test}\NormalTok{(x, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)$conf.int}
+\CommentTok{# Plot histogram}
+\NormalTok{p8 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(xx_mon, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{n)) +}
+\StringTok{    }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{position=}\StringTok{"identity"}\NormalTok{, }\DataTypeTok{colour=}\StringTok{"grey40"}\NormalTok{, }\DataTypeTok{alpha=}\FloatTok{0.2}\NormalTok{, }\DataTypeTok{bins =} \DecValTok{15}\NormalTok{)+}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Number of Mondays"}\NormalTok{)+}\StringTok{ }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Number of accidents"}\NormalTok{) +}\StringTok{ }\KeywordTok{theme_minimal}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{8}\NormalTok{)}
+\NormalTok{p8}
+\CommentTok{# Shapiro-Wilk normality test}
+\KeywordTok{shapiro.test}\NormalTok{(xx_mon$n)}
+\end{Highlighting}
+\end{Shaded}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\hypertarget{ref-lane_online_2018}{}
+Lane, David M. 2018. ``Online Statistics Education: An Interactive
+Multimedia Course of Study.'' \url{http://onlinestatbook.com/}.
+
+\hypertarget{ref-taylor_math5741m:_2017}{}
+Taylor, Charles. 2017. ``MATH5741M: Statistical Theory and Methods.''
+School of Mathematics - University of Leeds.
+
+
+\end{document}
