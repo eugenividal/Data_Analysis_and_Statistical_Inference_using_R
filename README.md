@@ -9,7 +9,7 @@ Student ID: 201081646
 Introduction
 ============
 
-This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer statistically three questions regarding a road traffic accidents dataset from 2005 collected by the UK Department for Transport.
+This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer through statistical analysis three questions regarding a road traffic accidents dataset from 2005 collected by the UK Department for Transport.
 
 All the analysis has been done using **R** (programming language) and is code reproducible. To see the complete **R** coding process and outputs visit <https://github.com/eugenividal/Data_Analysis_and_Statistical_Inference_using_R>.
 
@@ -30,7 +30,7 @@ For this, we first prepare the data removing "Unallocated" values from the `Urba
 Number of vehicles involved in accidents grouped by type of area
 </p>
 
-Apart from the fact that rural areas have more outliers than urban areas, in the boxplot we cannot appreciate the differences between their quantiles. Both boxes look identical and the median and upper quartile seem to be coincident.
+Apart from the fact that urban areas have less outliers than rural areas, in the boxplot we cannot appreciate the differences between their quantiles. Both boxes look identical and the median and upper quartile seem to be coincident.
 
 This is because the data is not symmetrical. As we can see in histogram H1 (Figure 2), the data is very skewed to the right. To normalise it, we transform the `Number_of_Vehicles` variable in three different ways: taking the log10, log2 and using the square root (see histograms, H2, H3 and H4 in Figure 2). In these new histograms, the distribution is not entirely symmetric, but they have improved, particularly those that take log10 and log2.
 
@@ -39,35 +39,32 @@ This is because the data is not symmetrical. As we can see in histogram H1 (Figu
 Data histogram (H1) and transformed data histograms (H2, H3, H4)
 </p>
 
-We choose the log10 transformation, which looks closer to normal distribution, and draw a second boxpot.
+We choose the log10 transformation and draw a second boxpot.
 
 <img src="README_files/figure-markdown_github/fig3-1.png" alt="Number of vehicles (log10) involved in accidents grouped by type of area"  />
 <p class="caption">
 Number of vehicles (log10) involved in accidents grouped by type of area
 </p>
 
-This time the appearance of the boxplot is better, with bigger boxes. However, the interpretation is still hard, and we cannot be 100% sure whether the average number of vehicles involved in accidents differs per type of area.
+This time the appearance of the boxplot is better. However, the interpretation can be even harder, and we cannot be 100% sure whether the average number of vehicles involved in accidents differs per type of area.
 
-To investigate this, we carry out a statistical test, which is the second requirement of the question. The null hypothesis is that the mean of vehicles involved in both types of areas is equal. The alternative hypothesis is that they differ. Denoting the rural areas by subscript *r* and urban by subscript *u*, we have:
+To investigate this, we carry out a statistical test, which is the second requirement of the question. The null hypothesis is that the mean of vehicles involved in both types of areas is equal. The alternative hypothesis is that they differ. Denoting the urban by subscript *u* and the rural areas by subscript *r*, we have:
 
 *H*<sub>0</sub> : *μ*<sub>*u*</sub> = *μ*<sub>*r*</sub>   *v**s*.   *H*<sub>1</sub> : *μ*<sub>*u*</sub> ≠ *μ*<sub>*r*</sub>
+ The summary statistics are:
 
-We will use a critical region approach with *α* = 0.01.
-
-The summary statistics are:
-
-$$n\_{u}=126378\\;\\;\\bar{x\_{u}}=0.2305898\\;\\;s\_{u}^{2}=0.1622405\\;\\;n\_{r}=72267\\;\\;\\bar{x\_{r}}=0.2389048\\;\\;s\_{r}^{2}=0.1775904$$
+$$n\_{u}=126378\\;\\;\\bar{x\_{u}}=0.2305898\\;\\;s\_{u}^{2}=0.02632197984\\;\\;n\_{r}=72267\\;\\;\\bar{x\_{r}}=0.2389048\\;\\;s\_{r}^{2}=0.03153835017$$
 
 <!--Case in p.78.-->
-It seems reasonable to assume *σ*<sub>*u*</sub><sup>2</sup> = *σ*<sub>*r*</sub><sup>2</sup>. Consequently, we apply a **pooled standard deviation** for our estimates<sup></sup>[1].
+It seems reasonable to assume *σ*<sub>*u*</sub><sup>2</sup> = *σ*<sub>*r*</sub><sup>2</sup>. Consequently, we apply a **pooled variance** for our estimates<sup></sup>[1].
 
 $$s\_{p}^{2}=\\frac{(n\_{u}-1)s\_{u}^{2}+(n\_{r}-1)s\_{r}^{2}}{n\_{u}+n\_{r}-2} = \\frac{126377\*0.02632197984+72266\*0.03153835017}{126378+72267-2}=0.0282197$$
 
 The test statistic is then:
 
-$$\\frac{\\bar x\_{u}-\\bar x\_{r}-0}{s\_{p}\\sqrt{\\frac{1}{n\_{u}}+\\frac{1}{n\_{r}}}}=\\frac{0.2389048-0.2305898}{0.0001316089}=-0.001374182$$
+$$\\frac{\\bar x\_{u}-\\bar x\_{r}-0}{s\_{p}\\sqrt{\\frac{1}{n\_{u}}+\\frac{1}{n\_{r}}}}=\\frac{0.2305898-0.2389048}{0.0007834463}=-10.61339$$
 
-We compare this to the critical point of t-distribution with *ν* = 198,643 degrees of freedom<sup></sup>[2], which is *t*<sub>198643</sub>(0.005)=2.575854. Since |0.001374182| &lt; 2.575854, we do not reject the null hypothesis and conclude that the mean of vehicles involved in both types of areas is equal (*μ*<sub>*u*</sub> = *μ*<sub>*r*</sub>).
+We compare this to the critical point of t-distribution with *ν* = 198643 degrees of freedom<sup></sup>[2], which is *t*<sub>198643</sub>(0.005)=2.575854. Since |10.61339| &gt; 2.575854, we reject the null hypothesis and conclude that the mean of vehicles involved in each type of area is not equal (*μ*<sub>*u*</sub> ≠ *μ*<sub>*r*</sub>).
 
 Question 2
 ----------
@@ -98,7 +95,7 @@ The value of *χ*<sup>2</sup> = 2456.93865. This can be compared to the *χ*<sup
 
 Next, we are required to do the same test using only week-days (excluding Saturday and Sunday).
 
-This time the null hypothesis is that the frequency of accidents is equally distributed per week days (i.e. the probability of accidents per each week day is 1/5). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents per each week day is not 1/5).
+This time, the null hypothesis is that the frequency of accidents is equally distributed per week days (i.e. the probability of accidents per each week day is 1/5). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents per each week day is not 1/5).
 
 *H*<sub>0</sub> : *p* = 1/5   *v**s*.   *H*<sub>1</sub> : *p* ≠ 1/5 
 
@@ -122,11 +119,11 @@ Finally, we are asked to compute a 95% confidence interval for the expected (mea
 
 To prepare the data, we filter the accidents occurred on Mondays and group them by date.
 
-In total we get 52 observations (*n* = 52). The sample mean and variance are: $\\bar{x}$= 534.8462 and *s*<sup>2</sup>= 92.98627 respectively. Since we desire a 95% interval, our *α*= 0.05. We then find that *t*<sub>51</sub>(0.025)= 2.007584.
+In total we get 52 observations (*n* = 52). The sample mean and standard deviation are: $\\bar{x}$= 534.8462 and *s*= 92.98627 respectively. Since we desire a 95% interval, our *α*= 0.05. We then find that *t*<sub>51</sub>(0.025)= 2.007584.
 
 Substituting all these quantities into the form of the confidence interval, we have the 95% confidence interval for the expected number of accidents on a Monday.
 
-$$\\left ( \\bar{x} -t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}, \\bar{x} +t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}\\right) = (534.8462-25.88754,\\; 534.8462+25.88754) = 508.9586, 560.7337 $$
+$$\\left ( \\bar{x} -t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}, \\bar{x} +t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}\\right) = (534.8462-25.88754,\\; 534.8462+25.88754) = 508.9586, 560.7337$$
 
 Computing this interval, we state the assumption that the data are normally distributed. An informal approach to check that this assumption is reasonable, is to compare a histogram (or another kind of graph) of the sample data to a normal probability curve, as we did in question 1.
 
@@ -137,13 +134,13 @@ Histogram number of accidents which occur on a Monday
 
 The histogram does not show perfect symmetry, but its shape is close to normal distribution.
 
-However, to be more certain, there are various formal hypothesis tests to check normality that can be used. The one that we will perform here is the **Shapiro-Wilk test**, which takes account of the expected values, but also the correlations between the order statistics (Taylor 2017, 85).
+However, to be more certain, various formal hypothesis tests to check normality can be used. The one that we will use here is the **Shapiro-Wilk test**, which takes account of the expected values, but also the correlations between the order statistics (Taylor 2017, 85).
 
 These are the hypothesis:
 
 *H*<sub>0</sub> : *d**a**t**a* *c**o**m**e* *f**r**o**m* *a* *n**o**r**m**a**l* *d**i**s**t**r**i**b**u**t**i**o**n*   *v**s*.   *H*<sub>1</sub> : *d**a**t**a* *d**o* *n**o**t* *c**o**m**e* *f**r**o**m* *a* *n**o**r**m**a**l* *d**i**s**t**r**i**b**u**t**i**o**n*
 
-We perform Shapiro-Wilk test of normality using the command `shapiro.test(x)` in **R**.
+To perform the test we use the command `shapiro.test(x)` in **R**.
 
 The results are W = 0.98537 and p-value = 0.7681.
 

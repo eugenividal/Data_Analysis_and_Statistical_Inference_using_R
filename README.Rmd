@@ -32,7 +32,7 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # Introduction
 
-This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer statistically three questions regarding a road traffic accidents dataset from 2005 collected by the UK Department for Transport.
+This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer through statistical analysis three questions regarding a road traffic accidents dataset from 2005 collected by the UK Department for Transport.
 
 All the analysis has been done using **R** (programming language) and is code reproducible. To see the complete **R** coding process and outputs visit https://github.com/eugenividal/Data_Analysis_and_Statistical_Inference_using_R.
 
@@ -106,7 +106,7 @@ p <- ggplot(xx_a, aes(x=Urban_or_Rural_Area, y=Number_of_Vehicles))+geom_boxplot
 p +  xlab("Type of area") + ylab("Number of vehicles") +  theme_minimal(base_size = 8)
 ```
 
-Apart from the fact that rural areas have more outliers than urban areas, in the boxplot we cannot appreciate the differences between their quantiles. Both boxes look identical and the median and upper quartile seem to be coincident.
+Apart from the fact that urban areas have less outliers than rural areas, in the boxplot we cannot appreciate the differences between their quantiles. Both boxes look identical and the median and upper quartile seem to be coincident.
 
 This is because the data is not symmetrical. As we can see in histogram H1 (Figure 2), the data is very skewed to the right. To normalise it, we transform the `Number_of_Vehicles` variable in three different ways: taking the log10, log2 and using the square root (see histograms, H2, H3 and H4 in Figure 2). In these new histograms, the distribution is not entirely symmetric, but they have improved, particularly those that take log10 and log2.
 
@@ -129,7 +129,7 @@ p6<-plot_grid(p2, p3, p4, p5, labels = c("H1","H2","H3","H4"), label_size = 10, 
 p6 
 ```
 
-We choose the log10 transformation, which looks closer to normal distribution, and draw a second boxpot.
+We choose the log10 transformation and draw a second boxpot.
 
 ```{r, fig3, fig.cap="Number of vehicles (log10) involved in accidents grouped by type of area", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Plot boxplot with data transformed
@@ -137,17 +137,14 @@ p7 <- ggplot(xx_a, aes(x=Urban_or_Rural_Area, y=log10))+geom_boxplot()
 p7 +  xlab("Type of area") + ylab("Number of vehicles -log10") +  theme_minimal(base_size = 8)
 ```
 
-This time the appearance of the boxplot is better, with bigger boxes. However, the interpretation is still hard, and we cannot be 100% sure whether the average number of vehicles involved in accidents differs per type of area. 
+This time the appearance of the boxplot is better. However, the interpretation can be even harder, and we cannot be 100% sure whether the average number of vehicles involved in accidents differs per type of area. 
 
-To investigate this, we carry out a statistical test, which is the second requirement of the question. The null hypothesis is that the mean of vehicles involved in both types of areas is equal. The alternative hypothesis is that they differ. Denoting the rural areas by subscript *r* and urban by subscript *u*, we have:
+To investigate this, we carry out a statistical test, which is the second requirement of the question. The null hypothesis is that the mean of vehicles involved in both types of areas is equal. The alternative hypothesis is that they differ. Denoting the urban by subscript *u* and the rural areas by subscript *r*, we have:
 
 $$H_{0}: \mu_{u} = \mu_{r}\;\;\;vs.\;\;\;H_{1}: \mu_{u} \neq \mu_{r}$$
-
-We will use a critical region approach with \(\alpha\) = 0.01.
-
 The summary statistics are:
 
-$$n_{u}=126378\;\;\bar{x_{u}}=0.2305898\;\;s_{u}^{2}=0.1622405\;\;n_{r}=72267\;\;\bar{x_{r}}=0.2389048\;\;s_{r}^{2}=0.1775904$$
+$$n_{u}=126378\;\;\bar{x_{u}}=0.2305898\;\;s_{u}^{2}=0.02632197984\;\;n_{r}=72267\;\;\bar{x_{r}}=0.2389048\;\;s_{r}^{2}=0.03153835017$$
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 # Prepare the data
@@ -159,36 +156,44 @@ xx_r <- xx_a%>%
 
 <!--Case in p.78.-->
 
-It seems reasonable to assume \(\sigma_{u}^{2}\) = \(\sigma_{r}^{2}\). Consequently, we apply a **pooled standard deviation** for our estimates<sup></sup>^[We can assume equal variances when the ratio of max/min is less than 3 or less than 4 for small samples [@taylor_math5741m:_2017, p.69].].
+It seems reasonable to assume \(\sigma_{u}^{2}\) = \(\sigma_{r}^{2}\). Consequently, we apply a **pooled variance** for our estimates<sup></sup>^[We can assume equal variances when the ratio of max/min is less than 3 or less than 4 for small samples [@taylor_math5741m:_2017, p.69].].
 
 $$s_{p}^{2}=\frac{(n_{u}-1)s_{u}^{2}+(n_{r}-1)s_{r}^{2}}{n_{u}+n_{r}-2} = \frac{126377*0.02632197984+72266*0.03153835017}{126378+72267-2}=0.0282197$$
 
 ```{r, include=FALSE}
 # Calculate pooled variance
-nu=length(xx_u$Number_of_Vehicles)
-nr=length(xx_r$Number_of_Vehicles)
+nu=length(xx_u$log10)
+nr=length(xx_r$log10)
 su= sd(xx_u$log10)
+su2=su*su
+su2
 sr= sd(xx_r$log10)
-sp = (((nr-1)*sr^2+(nu-1)*su^2))/((nr+nu)-2)
-sp
+sr2=sr*sr
+sr2
+sp2 = ((nu-1)*su2+(nr-1)*sr2)/((nu+nr)-2)
+sp2
 ```
 
 The test statistic is then:
 
-$$\frac{\bar x_{u}-\bar x_{r}-0}{s_{p}\sqrt{\frac{1}{n_{u}}+\frac{1}{n_{r}}}}=\frac{0.2389048-0.2305898}{0.0001316089}=-0.001374182$$
+$$\frac{\bar x_{u}-\bar x_{r}-0}{s_{p}\sqrt{\frac{1}{n_{u}}+\frac{1}{n_{r}}}}=\frac{0.2305898-0.2389048}{0.0007834463}=-10.61339$$
 ```{r, include=FALSE}
 # Compute test
 xbaru= mean(xx_u$log10)
+xbaru
 xbarr= mean(xx_r$log10)
-t = (xbaru-xbarr-0)/sp*sqrt(1/nu+1/nr)
-t
+xbarr
+pe = xbaru-xbarr
+sdpe = sqrt(sp2*(1/nu+1/nr))
+ts = pe/sdpe
+ts
 # Critical value
 df=(nu+nr-2)
 df
 abs(qt(0.01/2, df)) 
 ```
 
-We compare this to the critical point of t-distribution with \(\nu\) = 198,643 degrees of freedom<sup></sup>^[With this number of degrees of freedom we could have also apply z-statistic and the result would have been nearly the same.], which is \(t_{198643}\)(0.005)=2.575854. Since |0.001374182| < 2.575854, we do not reject the null hypothesis and conclude that the mean of vehicles involved in both types of areas is equal (\(\mu_{u}\) = \(\mu_{r}\)).
+We compare this to the critical point of t-distribution with \(\nu\) = 198643 degrees of freedom<sup></sup>^[With this number of degrees of freedom we could have also apply z-statistic and the result would have been nearly the same.], which is \(t_{198643}\)(0.005)=2.575854. Since |10.61339| > 2.575854, we reject the null hypothesis and conclude that the mean of vehicles involved in each type of area is not equal (\(\mu_{u}\) \(\neq\) \(\mu_{r}\)).
 
 ## Question 2
 
@@ -233,7 +238,7 @@ The value of \(\chi ^2\) = 2456.93865. This can be compared to the \(\chi ^2\) d
 
 Next, we are required to do the same test using only week-days (excluding Saturday and Sunday).
 
-This time the null hypothesis is that the frequency of accidents is equally distributed per week days (i.e. the probability of accidents per each week day is 1/5). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents per each week day is not 1/5).
+This time, the null hypothesis is that the frequency of accidents is equally distributed per week days (i.e. the probability of accidents per each week day is 1/5). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents per each week day is not 1/5).
 
 $$H_{0}: p=1/5\;\;\;vs.\;\;\;H_{1}:p\neq1/5\;$$
 
@@ -282,7 +287,7 @@ xx_mon<- xx%>%
   summarise(n = sum(count))
 ```
 
-In total we get 52 observations (\(n\) = 52). The sample mean and variance are: \(\bar{x}\)= 534.8462 and \(s^2\)= 92.98627 respectively. Since we desire a 95% interval, our \(\alpha\)= 0.05. We then find that \(t_{51}(0.025)\)= 2.007584. 
+In total we get 52 observations (\(n\) = 52). The sample mean and standard deviation are: \(\bar{x}\)= 534.8462 and \(s\)= 92.98627 respectively. Since we desire a 95% interval, our \(\alpha\)= 0.05. We then find that \(t_{51}(0.025)\)= 2.007584. 
 
 Substituting all these quantities into the form of the confidence interval, we have the 95% confidence interval for the expected number of accidents on a Monday.
 
@@ -290,13 +295,14 @@ Substituting all these quantities into the form of the confidence interval, we h
 # Compute the 95% confidence interval
 xbar= mean(xx_mon$n)
 xbar
+sd= sd(xx_mon$n)
+sd
 n=length(xx_mon$n)
-n
 conf.level<- 0.95
 z<-qt((1+conf.level)/2,df=n-1)
 z
 se<-sd(xx_mon$n)/sqrt(n)
-sd(xx_mon$n)
+se
 ci<-z*se
 ci
 xbar-ci
@@ -309,7 +315,7 @@ x<- xx_mon$n
 t.test(x, conf.level = 0.95)$conf.int
 ```
 
-$$\left ( \bar{x} -t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}, \bar{x} +t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}\right) = (534.8462-25.88754,\; 534.8462+25.88754) = 508.9586, 560.7337 $$
+$$\left ( \bar{x} -t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}, \bar{x} +t_{n-1}(\alpha /2)\frac{s}{\sqrt{n}}\right) = (534.8462-25.88754,\; 534.8462+25.88754) = 508.9586, 560.7337$$
 
 Computing this interval, we state the assumption that the data are normally distributed. An informal approach to check that this assumption is reasonable, is to compare a histogram (or another kind of graph) of the sample data to a normal probability curve, as we did in question 1.
 
@@ -322,7 +328,7 @@ p8
 
 The histogram does not show perfect symmetry, but its shape is close to normal distribution. 
 
-However, to be more certain, there are various formal hypothesis tests to check normality that can be used. The one that we will perform here is the **Shapiro-Wilk test**, which takes account of the expected values, but also the correlations between the order statistics [@taylor_math5741m:_2017, p.85].
+However, to be more certain, various formal hypothesis tests to check normality can be used. The one that we will use here is the **Shapiro-Wilk test**, which takes account of the expected values, but also the correlations between the order statistics [@taylor_math5741m:_2017, p.85].
 
 These are the hypothesis:
 
@@ -333,7 +339,7 @@ $$H_{0}: data\;come\;from\;a\;normal\;distribution\;\;\;vs.\;\;\;H_{1}:data\;do\
 shapiro.test(xx_mon$n)
 ```
 
-We perform Shapiro-Wilk test of normality using the command `shapiro.test(x)` in **R**. 
+To perform the test we use the command `shapiro.test(x)` in **R**. 
 
 The results are W = 0.98537 and p-value = 0.7681.
 
