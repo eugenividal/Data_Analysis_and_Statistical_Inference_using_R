@@ -1,201 +1,161 @@
-Road Traffic Accidents Data Analysis using R
+Data Analysis and Statistical Inference using R
 ================
 Student ID: 201081646
+
+
+
+
 
 Introduction
 ============
 
-This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to analyse a road traffic accidents dataset collected by the UK Department for Transport (DfT) in 2005 trough different statistical methods such as boxplot visualisations, statistical hypothesis testing, and confidence intervals.
+This report is the second assessment of the **MATH5741M Statistical Theory and Methods** module. Its aim is to answer statistically three questions regarding a road traffic accidents dataset from 2005 collected by the UK Department for Transport.
 
-It has been done using **R** (programming language) and it is code reproducible. To see the whole code written for its performance visit <https://github.com/eugenividal/Road-Traffic-Accidents-Data-Analysis>
+All the analysis has been done using **R** (programming language) and is code reproducible. To see the complete **R** coding process and outputs visit <https://github.com/eugenividal/Data_Analysis_and_Statistical_Inference_using_R>.
 
-Data preparation
-================
+Results
+=======
 
-First, we activate the libraries we will need to set up the project.
-
-``` r
-# Activate libraries
-library(tidyverse)
-library(cowplot)
-```
-
-Second, we load the data into the **R** environment.
-
-``` r
-# Read csv in R
-#xx=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/DfTaccidents.csv", header =T)
-xx=read.csv("DfTaccidents.csv", header=T)
-```
-
-The next step is to drop all those columns we will not need to perform our analysis. We only need: number of vehicles, type of area and day of the week.
-
-Then, we transform the variables
-
-``` r
-# Rename labels of Urban_or_Rural_Area
-xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "1"] <- "Urban"
-xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "2"] <- "Rural"
-xx$Urban_or_Rural_Area[xx$Urban_or_Rural_Area == "3"] <- "Unallocated"
-
-# Rename labels of day of the week
-xx$Day_of_Week[xx$Day_of_Week == "1"] <- "Sunday"
-xx$Day_of_Week[xx$Day_of_Week == "2"] <- "Monday"
-xx$Day_of_Week[xx$Day_of_Week == "3"] <- "Tuesday"
-xx$Day_of_Week[xx$Day_of_Week == "4"] <- "Wednesday"
-xx$Day_of_Week[xx$Day_of_Week == "5"] <- "Thursday"
-xx$Day_of_Week[xx$Day_of_Week == "6"] <- "Friday"
-xx$Day_of_Week[xx$Day_of_Week == "7"] <- "Saturday"
-
-#xx$Day_of_Week  <- factor(xx$Day_of_Week , levels= c("Sunday", "Monday", 
-#    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
-```
-
-Finally, we show the the dataset ready for exploration.
-
-``` r
-# Show first 6 rows
-head(xx)
-```
-
-    ##   Number_of_Vehicles Day_of_Week Urban_or_Rural_Area
-    ## 1                  1     Tuesday               Urban
-    ## 2                  1   Wednesday               Urban
-    ## 3                  2    Thursday               Urban
-    ## 4                  1      Friday               Urban
-    ## 5                  1      Monday               Urban
-    ## 6                  2     Tuesday               Urban
-
-Data exploration
-================
-
-Boxplot
--------
+Question 1
+----------
 
 <!--(1)Draw a boxplot to compare the number of vehicles involved in an urban area, with the number involved in a rural area. (2) Explain why a transformation of the data may (or may not) be appropriate. Using your transformation (or not) (3) carry out a suitable test to investigate whether the average number of vehicles in an accident differs in urban and rural areas.-->
-To compare the number of vehicles involved in urban areas with the number involved in a rural areas, we plot a boxplot. However, the graph is not very clear. To check what might be the problem, we plot a histogram. The data is not symetric, it is very skewed to the left (see histogram 1). To normalise it, I first plot three different transformations: log2, log10 and sqrt. Then, I chose log10 to plot the boxplot again.
+In this question, we are asked to draw a boxplot to compare the number of vehicles involved in urban areas with the number involved in rural areas.
 
-<img src="README_files/figure-markdown_github/unnamed-chunk-7-1.png"  style="display: block; margin: auto;" />
+<!--http://www.jbstatistics.com/pooled-variance-t-tests-and-confidence-intervals-an-example/-->
+For this, we first prepare the data removing "Unallocated" values from the `Urban_or_Rural Area` variable. Then, we plot the graph.
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   1.000   1.000   2.000   1.843   2.000  20.000
+<img src="README_files/figure-markdown_github/fig-1.png" alt="Number of vehicles involved in accidents grouped by type of area"  />
+<p class="caption">
+Number of vehicles involved in accidents grouped by type of area
+</p>
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##  0.0000  0.0000  1.0000  0.7761  1.0000  4.3219
+Apart from the fact that rural areas have more outliers than urban areas, in the boxplot we cannot appreciate the differences between their quantiles. Both boxes look identical and the median and upper quartile seem to be coincident.
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##  0.0000  0.0000  0.3010  0.2336  0.3010  1.3010
+This is because the data is not symmetrical. As we can see in histogram H1 (Figure 2), the data is very skewed to the right. To normalise it, we transform the `Number_of_Vehicles` variable in three different ways: taking the log10, log2 and using the square root (see histograms, H2, H3 and H4 in Figure 2). In these new histograms, the distribution is not entirely symmetric, but they have improved, particularly those that take log10 and log2.
 
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##   1.000   1.000   1.414   1.333   1.414   4.472
+<img src="README_files/figure-markdown_github/fig2-1.png" alt="Data histogram (H1) and transformed data histograms (H2, H3, H4)"  />
+<p class="caption">
+Data histogram (H1) and transformed data histograms (H2, H3, H4)
+</p>
 
-<img src="README_files/figure-markdown_github/unnamed-chunk-7-2.png"  style="display: block; margin: auto;" /><img src="README_files/figure-markdown_github/unnamed-chunk-7-3.png"  style="display: block; margin: auto;" />
+We choose the log10 transformation, which looks closer to normal distribution, and draw a second boxpot.
 
-However, from the boxplot we can not whether the average number of vehicles in an accident differ in urban and rural areas. To do this, we perform a test.
+<img src="README_files/figure-markdown_github/fig3-1.png" alt="Number of vehicles (log10) involved in accidents grouped by type of area"  />
+<p class="caption">
+Number of vehicles (log10) involved in accidents grouped by type of area
+</p>
 
-?chisq.test
+This time the appearance of the boxplot is better, with bigger boxes. However, the interpretation is still hard, and we cannot be 100% sure whether the average number of vehicles involved in accidents differs per type of area.
 
-This is the same as exercise C4 too.
-
-<https://statistics.laerd.com/statistical-guides/independent-t-test-statistical-guide.php>
-
-These are two-tailed tests of population mean with unknown variance. Pooled variance test?
+To investigate this, we carry out a statistical test, which is the second requirement of the question. The null hypothesis is that the mean of vehicles involved in both types of areas is equal. The alternative hypothesis is that they differ. Denoting the rural areas by subscript *r* and urban by subscript *u*, we have:
 
 *H*<sub>0</sub> : *μ*<sub>*u*</sub> = *μ*<sub>*r*</sub>   *v**s*.   *H*<sub>1</sub> : *μ*<sub>*u*</sub> ≠ *μ*<sub>*r*</sub>
 
-``` r
-# Check the variance of the two groups
-xx_area$log10 <- log10(xx_area$Number_of_Vehicles)
-Urban_or_Rural_Area <- xx_area$Urban_or_Rural_Area
-var(xx_area[Urban_or_Rural_Area=="Urban",4])        # apply the var function 
-```
+We will use a critical region approach with *α* = 0.01.
 
-    ## [1] 0.02632199
+The summary statistics are:
 
-``` r
-var(xx_area[Urban_or_Rural_Area=="Rural",4])
-```
+$$n\_{u}=126378\\;\\;\\bar{x\_{u}}=0.2305898\\;\\;s\_{u}^{2}=0.1622405\\;\\;n\_{r}=72267\\;\\;\\bar{x\_{r}}=0.2389048\\;\\;s\_{r}^{2}=0.1775904$$
 
-    ## [1] 0.03153835
+<!--Case in p.78.-->
+It seems reasonable to assume *σ*<sub>*u*</sub><sup>2</sup> = *σ*<sub>*r*</sub><sup>2</sup>. Consequently, we apply a **pooled standard deviation** for our estimates<sup></sup>[1].
 
-They are not about the same, should we continue with a two sample test which assumes equal variance? The independent t-test assumes the variances of the two groups you are measuring are equal in the population. If your variances are unequal, this can affect the Type I error rate. The assumption of homogeneity of variance can be tested using Levene's Test of Equality of Variances.
+$$s\_{p}^{2}=\\frac{(n\_{u}-1)s\_{u}^{2}+(n\_{r}-1)s\_{r}^{2}}{n\_{u}+n\_{r}-2} = \\frac{126377\*0.02632197984+72266\*0.03153835017}{126378+72267-2}=0.0282197$$
 
-``` r
-# pooled variance test
-#t.test(xx[])
-```
+The test statistic is then:
 
-In conclusion, we can say that
+$$\\frac{\\bar x\_{u}-\\bar x\_{r}-0}{s\_{p}\\sqrt{\\frac{1}{n\_{u}}+\\frac{1}{n\_{r}}}}=\\frac{0.2389048-0.2305898}{0.0001316089}=-0.001374182$$
 
-Statistical hypothesis
-----------------------
+We compare this to the critical point of t-distribution with *ν* = 198,643 degrees of freedom<sup></sup>[2], which is *t*<sub>198643</sub>(0.005)=2.575854. Since |0.001374182| &lt; 2.575854, we do not reject the null hypothesis and conclude that the mean of vehicles involved in both types of areas is equal (*μ*<sub>*u*</sub> = *μ*<sub>*r*</sub>).
 
-<!--Using a suitable statistical hypothesis test, investigate whether the frequency of accidents varies by day of the week. Repeat this test using only week-days (excuding Saturday and Sunday).-->
-Comparing frequency counts between two groups of different sample.
+Question 2
+----------
 
-Chi-squared test?
+<!--Using a suitable statistical hypothesis test, investigate whether the frequency of accidents varies by day of the week. Repeat this test using only week-days (excuding Saturday and Sunday)
 
-In this section, we investigate whether the frequency of accidents varies by day of the week. To do this we use a statistical hypotesis test.
+http://www.jbstatistics.com/chi-square-tests-for-one-way-tables/
+The key is that we want to test the frequency. p.91..-->
+In this question, we have to investigate whether the frequency of accidents varies by day of the week using a suitable statistical hypothesis test. **Chi-square test** can be used to test whether observed data differ significantly from theoretical expectations (Lane 2018). So, this is the test we apply.
 
-\*Note that here the unallocated accidents are included.
+The null hypothesis is that the frequency of accidents is evenly distributed per days of the week (i.e. the probability of accidents occurring per each day is 1/7). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents occurring per each day is not 1/7).
 
-``` r
-# hypothesis per each day
-ggplot(xx, aes(x=Day_of_Week))+geom_bar() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1))
-```
+*H*<sub>0</sub> : *p* = 1/7   *v**s*.   *H*<sub>1</sub> : *p* ≠ 1/7 
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
+To carry out this test, first, we prepare the data, aggregating it by `Day_of_Week`. Secondly, we create a table with the observed values, the expected values and other necessary contributions for the test per day of week.
 
-Next, we are asked to do the same test using only week-days (excluding Saturday and Sunday).
+|  week days|  observed|  expected|     oi - ei|  (oi - ei)^2/ei|
+|----------:|---------:|---------:|-----------:|---------------:|
+|     Monday|     27812|  28390.71|    578.7143|        11.79647|
+|    Tuesday|     29219|  28390.71|   -828.2857|        24.16485|
+|  Wednesday|     30373|  28390.71|  -1982.2857|       138.40640|
+|   Thursday|     29738|  28390.71|  -1347.2857|        63.93565|
+|     Friday|     32738|  28390.71|  -4347.2857|       665.67163|
+|   Saturday|     26945|  28390.71|   1445.7143|        73.61878|
+|     Sunday|     21910|  28390.71|   6480.7143|      1479.34487|
 
-``` r
-# Select data using only week-days
-week_days <- xx%>%
-  select(Day_of_Week)%>%
-  filter(!Day_of_Week %in% c("Saturday", "Sunday"))
-```
+The value of *χ*<sup>2</sup> = 2456.93865. This can be compared to the *χ*<sup>2</sup> distribution with 7 - 1 = 6 degrees of freedom, giving a p-value of 2.2e-16. This p-value represents the probability that we are wrong in the assumption they are basically not equally distributed. So, we reject the null hypothesis and affirm that the frequency of accidents is not evenly distributed per days of the week (*p* ≠ 1/7).
 
-    ## Warning: package 'bindrcpp' was built under R version 3.4.4
+Next, we are required to do the same test using only week-days (excluding Saturday and Sunday).
 
-``` r
-table(week_days)
-```
+This time the null hypothesis is that the frequency of accidents is equally distributed per week days (i.e. the probability of accidents per each week day is 1/5). The alternative hypothesis is that their frequency differs (i.e. the probability of accidents per each week day is not 1/5).
 
-    ## week_days
-    ##    Friday    Monday  Thursday   Tuesday Wednesday 
-    ##     32738     27812     29738     29219     30373
+*H*<sub>0</sub> : *p* = 1/5   *v**s*.   *H*<sub>1</sub> : *p* ≠ 1/5 
 
-``` r
-ggplot(week_days, aes(x=Day_of_Week))+geom_bar() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1)) 
-```
+First, we prepare the data, aggregating it by `Day_of_Week` and removing Saturday and Sundays. Then, we create a new table with the summaries from Monday to Friday.
 
-![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)
+|  week days|  observed|  expected|  oi - ei|  (oi - ei)^2/ei|
+|----------:|---------:|---------:|--------:|---------------:|
+|     Monday|     27812|     29976|     2164|      156.221510|
+|    Tuesday|     29219|     29976|      757|       19.116927|
+|  Wednesday|     30373|     29976|     -397|        5.257840|
+|   Thursday|     29738|     29976|      238|        1.889645|
+|     Friday|     32738|     29976|    -2762|      254.491727|
 
-``` r
-# hypothesis per each day using only week-days
-```
+The value of *χ*<sup>2</sup> = 436.9776. This is compared to the *χ*<sup>2</sup> distribution with 5-1=4 degree of freedom, giving a p-value again of 2.2e-16. So, again we reject the null hypothesis and state that the frequency of accidents in week days is not equally distributed (*p* ≠ 1/5).
 
-Confidence interval
--------------------
+Question 3
+----------
 
 <!--Compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday. State your assumptions in computing this interval, and verify whether they are valid.-->
-Finally, in this section, we compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday.
+Finally, we are asked to compute a 95% confidence interval for the expected (mean) number of accidents which occur on a Monday.
 
-``` r
-# Select data using only week-days
-week_days<- xx%>%
-  select(Day_of_Week)%>%
-  filter(Day_of_Week == "Monday")
-```
+To prepare the data, we filter the accidents occurred on Mondays and group them by date.
 
-Bibliography
-------------
+In total we get 52 observations (*n* = 52). The sample mean and variance are: $\\bar{x}$= 534.8462 and *s*<sup>2</sup>= 92.98627 respectively. Since we desire a 95% interval, our *α*= 0.05. We then find that *t*<sub>51</sub>(0.025)= 2.007584.
 
-The resources used to carry out this project are:
+Substituting all these quantities into the form of the confidence interval, we have the 95% confidence interval for the expected number of accidents on a Monday.
 
--   Balka, J. 2013. JBStatistics: Making Statistics Make Sense. Available from: <http://www.jbstatistics.com>.
--   Lane, D.M. 2018. Online Statistics Education: An Interactive Multimedia Course of Study. Available from: <http://onlinestatbook.com/>.
--   Taylor, C. 2017. MATH5741M: Statistical Theory and Methods. Outline Lecture Notes.
--   Yau, C. 2018. R tutorial: an R introduction to statistics. Available from: <http://www.r-tutor.com>
+$$\\left ( \\bar{x} -t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}, \\bar{x} +t\_{n-1}(\\alpha /2)\\frac{s}{\\sqrt{n}}\\right) = (534.8462-25.88754,\\; 534.8462+25.88754) = 508.9586, 560.7337 $$
+
+Computing this interval, we state the assumption that the data are normally distributed. An informal approach to check that this assumption is reasonable, is to compare a histogram (or another kind of graph) of the sample data to a normal probability curve, as we did in question 1.
+
+<img src="README_files/figure-markdown_github/fig5-1.png" alt="Histogram number of accidents which occur on a Monday"  />
+<p class="caption">
+Histogram number of accidents which occur on a Monday
+</p>
+
+The histogram does not show perfect symmetry, but its shape is close to normal distribution.
+
+However, to be more certain, there are various formal hypothesis tests to check normality that can be used. The one that we will perform here is the **Shapiro-Wilk test**, which takes account of the expected values, but also the correlations between the order statistics (Taylor 2017, 85).
+
+These are the hypothesis:
+
+*H*<sub>0</sub> : *d**a**t**a* *c**o**m**e* *f**r**o**m* *a* *n**o**r**m**a**l* *d**i**s**t**r**i**b**u**t**i**o**n*   *v**s*.   *H*<sub>1</sub> : *d**a**t**a* *d**o* *n**o**t* *c**o**m**e* *f**r**o**m* *a* *n**o**r**m**a**l* *d**i**s**t**r**i**b**u**t**i**o**n*
+
+We perform Shapiro-Wilk test of normality using the command `shapiro.test(x)` in **R**.
+
+The results are W = 0.98537 and p-value = 0.7681.
+
+The p-values gives evidence against the null hypothesis. Since the p-value = 0.7681 is large (i.e. greater than 0.05), we accept that the data come from a normally distributed population.
+
+References
+==========
+
+Lane, David M. 2018. “Online Statistics Education: An Interactive Multimedia Course of Study.” <http://onlinestatbook.com/>.
+
+Taylor, Charles. 2017. “MATH5741M: Statistical Theory and Methods.” School of Mathematics - University of Leeds.
+
+[1] We can assume equal variances when the ratio of max/min is less than 3 or less than 4 for small samples (Taylor 2017, 69).
+
+[2] With this number of degrees of freedom we could have also apply z-statistic and the result would have been nearly the same.
