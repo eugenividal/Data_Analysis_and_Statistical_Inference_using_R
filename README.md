@@ -149,7 +149,8 @@ The results are W = 0.98537 and p-value = 0.7681.
 
 The p-values gives evidence against the null hypothesis. Since the p-value = 0.7681 is large (i.e. greater than 0.05), we accept that the data come from a normally distributed population.
 
-### Appendix
+Appendix
+========
 
 ``` r
 knitr::opts_chunk$set(fig.pos = 'H')
